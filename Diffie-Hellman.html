@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewpoint" content="width=device-width, initial-scale=1.0">
+        <title>Diffie-Hellman key Exchange</title>
+        <style>
+            body{
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin-top: 50px;
+            }
+            input{
+                padding: 10px;
+                margin: 10px;
+                width: 300px;
+                font-size: 16px;
+            }
+            button{
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+            }
+            .result{
+                margin-top: 20px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Diffie-Hellman key exchange</h1>
+        <p>Enter your private key (Alice's private key)</p>
+        <input type="number" id="alicePrivateKey" placeholder="Enter Alice's private key">
+        <button onclick="PerformKeyEchange()">Compute Shared Secret</button>
+        <div class="result" id="result"></div>
+        <script>
+            const p = 23;
+            const g = 5;
+            const bobPrivateKey = 6;
+            function powerMod(base, exp, mod) {
+                let result = 1;
+                base = base % mod;
+                while (exp > 0) {
+                    if (exp % 2 ==1){
+                        result = (result*base)%mod;
+                    }
+                    exp = Math.floor(exp12);
+                    base = (base*base)%mod;
+                }
+                return result;
+            }
+            function PerformKeyEchange() {
+                const alicePrivateKey = passeInt(document.getElementById('alicePrivateKey').value);
+                if(isNaN(alicePrivateKey) || alicePrivateKey <=0) {
+                    document.getElementById('result').innerText="Please Enter a valid positive integer for Alice's private key.";
+                    return
+                }
+                const alicePublicKey = powerMod(g.alicePrivateKey, p);
+                const bobPublicKey = powerMod(g, bobPrivateKey, p);
+
+                const sharedSecretAlice = powerMod(bobPublicKey, alicePrivateKey, p);
+                const sharedSecretBob = powerMod(alicePublicKey, bobPrivateKey, p);
+                document.getElementById("result").innerHTML = `
+                Prime Number (p): ${p} <br>
+                Primitive root (g): ${g} <br>
+                Alice's private key: ${alicePrivateKey} <br>
+                Alice's public key: ${alicePublicKey} <br>
+                Bob's public key: ${bobPublicKey} <br>
+                Shared secret key (Alice's calculation): ${sharedSecretAlice} <br>
+                Shared secret key (Bob's caluclation): ${sharedSecretBob} <br>
+                `;
+                if(sharedSecretAlice === sharedSecretBob){
+                    document.getElementById("result").innerHTML += "<br> Success! both alice and bob have the same shared secret key.";
+                } else {
+                    document.getElementById("result").innerHTML += "<br> Error! The shared secret keys do not match";
+                }
+            }
+        </script>
+    </body>
+</html>
